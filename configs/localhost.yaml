@@ -1,6 +1,0 @@
-computer_address: localhost:8080
-models: 
-  - model:
-      name: resnet
-      class: torchvision.models.resnet18
-      checkpoint_path: null

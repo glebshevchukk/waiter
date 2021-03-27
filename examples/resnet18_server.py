@@ -1,10 +1,12 @@
-from waiter import WaiterServer
-from torchvision import transforms
+from waiter.waiter import Waiter
+from torchvision import transforms, models
 import torch
 from PIL import Image
 import numpy as np
+import os
+import sys
 
-config_file = "../configs/localhost.yaml"
+config_file = os.path.join(sys.path[0],"localhost.yaml")
 device = torch.device("cpu")
 
 image_compose = transforms.Compose([
@@ -21,5 +23,8 @@ def resnet18_preprocess(inp):
         inp = inp.unsqueeze(0)
     return inp
 
-preprocessors = {'resnet':resnet18_preprocess}
-waiter = WaiterServer(config_file=config_file, device=device, preprocessors=preprocessors)
+model = models.resnet18()
+
+model_name = 'resnet'
+waiter = Waiter(connection_point='http://localhost:5000')
+waiter.send_model(model_name,model)

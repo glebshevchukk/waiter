@@ -11,9 +11,3 @@ Waiter lets you deploy machine learning models built on Pytorch/Tensorflow/ONNX 
 * Load balance inference requests in production
 * Sync models across computers.
 * Centrally store models and keep them updated across your team
-
-Quickstart:
-
-```
-waiter serve CHECKPOINT_PATH
-```

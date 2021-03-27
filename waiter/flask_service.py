@@ -1,24 +1,52 @@
 from flask import Flask, Response, jsonify, request
+import json
+import numpy as np
+import pickle
+import onnxruntime as rt
+from werkzeug.utils import secure_filename
+import os
+from util import NumpyEncoder
+
+app = Flask('waiter')
+models = {}
+model_path = "./model_files/"
+
+for p in os.listdir(model_path):
+    k = p[:p.find('-')]
+    models[k] = p
+
+def do_inference(key,msg):
+    print(models)
+    if key not in models:
+        return {"msg":"That model does not exist."}
+    inp = np.array(json.loads(msg.json))
+    try:
+        sess = rt.InferenceSession(model_path+models[key])
+        input_name = sess.get_inputs()[0].name
+        output = sess.run(None, {input_name: inp.astype(np.float32)})[0]
+        return json.dumps(output, cls=NumpyEncoder)
+    except Exception as e:
+        print(e)
+        print(f"Error with performing inference on model {key}, returning None")
+        return None
+
+@app.route('/sync',methods=["POST"])
+def sync():
+    if request.method == 'POST':
+        #TODO: Add extra verification against tampering
+        info = request.files
+        
+        for model in info.keys():
+            f = info[model]
+            f.save(model_path+secure_filename(f.filename))   
+            models[model] = f.filename     
+    return {"msg": "Sync successful."}
 
 
-class EndpointAction(object):
+@app.route('/infer/<model>',methods=["POST"])
+def infer(model):
+    if request.method == 'POST':
+        return do_inference(model,request)
 
-    def __init__(self, model,action):
-        self.model = model
-        self.action = action
-
-    def __call__(self, *args):
-        output = self.action(self.model,request) 
-        return jsonify(output)
-
-
-class FlaskAppWrapper(object):
-    app = None
-    def __init__(self, name):
-        self.app = Flask(name)
-
-    def run(self):
-        self.app.run()
-
-    def add_endpoint(self, model=None, endpoint=None, endpoint_name=None, handler=None):
-        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(model,handler),methods=["POST"])
+if __name__ == "__main__":  
+    app.run(host='0.0.0.0')
