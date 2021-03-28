@@ -1,13 +1,19 @@
 from flask import Flask, Response, jsonify, request
+
 import json
 import numpy as np
 import pickle
 import onnxruntime as rt
 from werkzeug.utils import secure_filename
-import os
+import os, time
 from util import NumpyEncoder
 
+
 app = Flask('waiter')
+app.config['SECRET_KEY'] = 'geronimo'
+
+if __name__ == '__main__':
+    app.run('0.0.0.0')
 models = {}
 model_path = "./model_files/"
 
@@ -49,4 +55,4 @@ def infer(model):
         return do_inference(model,request)
 
 if __name__ == "__main__":  
-    app.run(host='0.0.0.0')
+    socketio.run(app)

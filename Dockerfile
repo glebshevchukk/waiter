@@ -8,4 +8,4 @@ COPY . /src/
 
 RUN pip install -e .
 EXPOSE 5000
-CMD ["python", "/src/examples/resnet18_server.py"]
+CMD ["python", "/src/waiter/flask_service.py"]
