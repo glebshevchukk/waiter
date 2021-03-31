@@ -2,7 +2,7 @@ from termcolor import colored
 
 from rich.console import Console
 from rich.markdown import Markdown
-import hruid
+import hruid, uuid
 import os, sys, uuid, json, yaml
 import numpy as np
 
@@ -13,9 +13,8 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 def make_identifier():
-    generator = hruid.Generator()
-    phrase = generator.random()
-    return phrase
+    '''This identifier should stay the same for each computer'''
+    return str(uuid.UUID(int=uuid.getnode()))
 
 def display_success(self):
     console = Console()

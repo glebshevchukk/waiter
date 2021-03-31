@@ -1,6 +1,4 @@
 import torch
-
-from flask import jsonify,send_from_directory
 import torchvision.models as models
 from urllib.parse import urlparse
 from pydoc import locate
@@ -22,7 +20,7 @@ import socketio
 from timeit import default_timer as timer
 
 
-main_server_loc= 'http://localhost:3000'
+main_server_loc= 'http://localhost:5000'
 
 class Waiter(object):
     def __init__(self,connection_point=None):
@@ -62,14 +60,14 @@ class Waiter(object):
         else:
             batch_size = 0
         current_time = timer()
-        stats = {"sent_time":current_time,"id":self.identifier,"elapsed":elapsed_time,"batch_size":batch_size,"success":success,"error":error}
+        stats = {"sent_time":current_time,"service_id":self.identifier,"elapsed":elapsed_time,"batch_size":batch_size,"success":success,"error":error}
         print(stats)
         self.sio.emit('statistics', json.dumps(stats))
         return json_as_np
         
     def send_handshake(self):
         current_time = timer()
-        stats = {"sent_time":current_time,"id":self.identifier}
+        stats = {"sent_time":current_time,"service_id":self.identifier}
         self.sio.emit('handshake', json.dumps(stats))
        
 
