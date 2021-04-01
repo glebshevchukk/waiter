@@ -8,21 +8,15 @@ from werkzeug.utils import secure_filename
 import os, time
 from util import NumpyEncoder
 
-
 app = Flask('waiter')
 app.config['SECRET_KEY'] = 'geronimo'
 
-if __name__ == '__main__':
-    app.run('0.0.0.0')
 models = {}
-model_path = "./model_files/"
 
-for p in os.listdir(model_path):
-    k = p[:p.find('-')]
-    models[k] = p
+def add_model(model_name,model_file):
+    models[model_name] = model_file
 
 def do_inference(key,msg):
-    print(models)
     if key not in models:
         return {"msg":"That model does not exist."}
     inp = np.array(json.loads(msg.json))
@@ -36,23 +30,11 @@ def do_inference(key,msg):
         print(f"Error with performing inference on model {key}, returning None")
         return None
 
-@app.route('/sync',methods=["POST"])
-def sync():
-    if request.method == 'POST':
-        #TODO: Add extra verification against tampering
-        info = request.files
-        
-        for model in info.keys():
-            f = info[model]
-            f.save(model_path+secure_filename(f.filename))   
-            models[model] = f.filename     
-    return {"msg": "Sync successful."}
-
-
 @app.route('/infer/<model>',methods=["POST"])
 def infer(model):
     if request.method == 'POST':
         return do_inference(model,request)
 
-if __name__ == "__main__":  
-    socketio.run(app)
+
+def run_app():
+    app.run()

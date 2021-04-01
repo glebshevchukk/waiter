@@ -5,6 +5,8 @@ from rich.markdown import Markdown
 import hruid, uuid
 import os, sys, uuid, json, yaml
 import numpy as np
+import hashlib
+import datetime
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -26,3 +28,18 @@ def display_success(self):
         markdown = Markdown(text)
         console.print(markdown)
     console.print("Waiter is running now.", style="bold green")
+
+def get_api_key():
+    with open(".WAITER","r") as f:
+        return str(f.readline())
+
+def get_checksum(model_file):
+    with open(model_file, "rb") as f:
+        file_hash = hashlib.blake2b()
+        while chunk := f.read(8192):
+            file_hash.update(chunk)
+    return file_hash.hexdigest()
+
+def get_time_created(file):
+    dt=os.path.getmtime(file)
+    return datetime.datetime.utcfromtimestamp(dt)
