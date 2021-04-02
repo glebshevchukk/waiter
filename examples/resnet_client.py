@@ -3,7 +3,7 @@ import numpy as np
 from torchvision import transforms, models
 from PIL import Image
 
-waiter = Waiter('http://localhost:5000')
+waiter = Waiter()
 random_input = np.random.randint(low=0, high=255, size=(224, 224,3), dtype=np.uint8)
 
 image_compose = transforms.Compose([
@@ -21,5 +21,5 @@ def resnet18_preprocess(inp):
     return inp.numpy()
 
 processed = resnet18_preprocess(random_input)
-result = waiter.inference(processed,"resnet")
+result = waiter.call_inference(processed,"resnet")
 print(result)
