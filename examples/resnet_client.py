@@ -1,9 +1,9 @@
-from waiter.waiter import Waiter
+from waiter.waiter_client import WaiterClient
 import numpy as np
 from torchvision import transforms, models
 from PIL import Image
 
-waiter = Waiter()
+waiter = WaiterClient()
 random_input = np.random.randint(low=0, high=255, size=(224, 224,3), dtype=np.uint8)
 
 image_compose = transforms.Compose([
