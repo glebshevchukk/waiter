@@ -42,4 +42,4 @@ def get_checksum(model_file):
 
 def get_time_created(file):
     dt=os.path.getmtime(file)
-    return datetime.datetime.utcfromtimestamp(dt)
+    return dt

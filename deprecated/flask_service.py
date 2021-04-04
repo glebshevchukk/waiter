@@ -14,7 +14,7 @@ app.config['SECRET_KEY'] = 'geronimo'
 models = {}
 
 def add_model(model_name,model_file):
-    models[model_name] = model_file
+    self.models[model_name] = model_file
 
 def do_inference(key,msg):
     if key not in models:
