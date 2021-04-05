@@ -47,7 +47,6 @@ class Waiter():
     def call_backs(self):
         @self.sio.event
         def run_inference(data):
-            print("Inference started!")
             key = data['service_name']
             if key not in self.models:
                 print("Model with that service name does not exist.")
@@ -58,11 +57,10 @@ class Waiter():
                 sess = rt.InferenceSession(self.models[key])
                 input_name = sess.get_inputs()[0].name
                 label_name = sess.get_outputs()[0].name
-                print("About to pass into session for run")
                 output = sess.run([label_name], {input_name: inp.astype(np.float32)})[0]
 
-                return_data = {'client_id':data['client_id'],'output':output.tobytes()}
-                #return return_data
+                return_data = {'client_id':data['client_id'],'output':pickle.dumps(output)}
+            
                 self.sio.emit('send_result',return_data)
             except Exception as e:
                 print(e)

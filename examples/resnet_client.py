@@ -22,4 +22,3 @@ def resnet18_preprocess(inp):
 
 processed = resnet18_preprocess(random_input)
 result = waiter.call_inference(processed,"resnet")
-print(result)
