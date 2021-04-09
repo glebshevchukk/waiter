@@ -27,7 +27,7 @@ extension = ".onnx"
 
 class WaiterClient():
     def __init__(self):
-        self.api_key = '7654150c-fc7d-481e-bb75-22d731da4452'
+        self.api_key = get_api_key()
         self.persistent_id = make_identifier()
         self.sio = socketio.Client()
         self.call_backs()
@@ -37,7 +37,8 @@ class WaiterClient():
     def call_backs(self):
         @self.sio.event
         def return_result(data):
-            d = pickle.loads(data)
+            d = pickle.loads(data['output'])
+
             self.result.put(d)
 
     def call_inference(self,numpy_input,service_name,blocking=True):

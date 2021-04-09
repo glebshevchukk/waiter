@@ -30,7 +30,7 @@ def display_success(self):
     console.print("Waiter is running now.", style="bold green")
 
 def get_api_key():
-    with open(".WAITER","r") as f:
+    with open(os.path.dirname(os.path.realpath(__file__))+"/.WAITER","r") as f:
         return str(f.readline())
 
 def get_checksum(model_file):

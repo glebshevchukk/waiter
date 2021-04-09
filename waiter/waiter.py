@@ -27,7 +27,7 @@ main_server_loc= 'http://127.0.0.1:5000'
 class Waiter():
 
     def __init__(self):
-        self.api_key = '7654150c-fc7d-481e-bb75-22d731da4452'
+        self.api_key = get_api_key()
         self.persistent_id = make_identifier()
         self.models = {}
         self.sio = socketio.Client()
@@ -59,7 +59,7 @@ class Waiter():
                 label_name = sess.get_outputs()[0].name
                 output = sess.run([label_name], {input_name: inp.astype(np.float32)})[0]
 
-                return_data = {'client_id':data['client_id'],'output':pickle.dumps(output)}
+                return_data = {'client_id':data['client_id'],'client_socket_id':data['client_socket_id'],'output':pickle.dumps(output)}
             
                 self.sio.emit('send_result',return_data)
             except Exception as e:
