@@ -10,4 +10,5 @@ device = torch.device("cpu")
 resnet18 = models.resnet18()
 
 waiter = Waiter()
-waiter.run('resnet','resnet.onnx')
+waiter.get_model('resnet')
+#waiter.run('resnet','resnet.onnx')

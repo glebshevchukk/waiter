@@ -66,15 +66,6 @@ class Waiter():
                 print(e)
                 print(f"Error with performing inference on model {key}, returning None")
             
-        # @self.sio.on('send_model')
-        # def on_send_model(service_name):
-        #     model_path = model_dir+service_name+extension
-        #     try:
-        #         files = {service_name: open(model_path, 'rb')}
-        #         info = {'service_name':service_name,'api_key':self.api_key}
-        #         resp = requests.post(main_server_loc+"/sync",files=files)
-        #     except Exception as e:
-        #         print(e)
 
     def serve(self,service_name,model_path=None):
         #if a model isn't specified, we have to pull it from another server
@@ -112,9 +103,23 @@ class Waiter():
         resp_info = self.sio.call('service_exists',json.dumps(stats,cls=NumpyEncoder))
         return resp_info
        
+    #These two use stock POST requests because they're dealing with presumably large files
     def get_model(self,service_name):
         model_path = model_dir+service_name+extension
-        info = {'api_key':self.api_key,'service_name':service_name}
-        resp = requests.post(main_server_loc+"/get_model",json.dumps(info))
+        info = {'server_id':self.persistent_id,'api_key':self.api_key,'service_name':service_name}
+        resp = requests.post(main_server_loc+"/api/v1/get_model",json=json.dumps(info))
         with open(model_path, 'wb') as f:
             f.write(resp.content)
+
+    def send_model(self,service_name):
+        model_path = model_dir+service_name+extension
+        print(model_path)
+        try:
+            info = {'server_id':self.persistent_id,'service_name':service_name,'api_key':self.api_key}
+            files = [
+             ('model', (model_path, open(model_path, 'rb'))),
+            ('data', ('data', json.dumps(info), 'application/json')),
+            ]
+            resp = requests.post(main_server_loc+"/api/v1/send_model",files=files)
+        except Exception as e:
+            print(e)
