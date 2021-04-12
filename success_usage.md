@@ -16,7 +16,7 @@ client = WaiterClient('{{unique_identifier}}')
 client.sync({{computer_address}}/waiter/sync/)
 ``` -->
 
-3. Visualize deployment statistics and logs at:
+<!-- 3. Visualize deployment statistics and logs at:
 ```
 waiter.ai/viz/{{unique_identifier}}
-```
+``` -->

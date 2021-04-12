@@ -1,9 +1,9 @@
-from waiter.waiter_client import WaiterClient
+from waiter import WaiterClient
 import numpy as np
 from torchvision import transforms, models
 from PIL import Image
 
-waiter = WaiterClient()
+client = WaiterClient()
 random_input = np.random.randint(low=0, high=255, size=(224, 224,3), dtype=np.uint8)
 
 image_compose = transforms.Compose([
@@ -21,5 +21,5 @@ def resnet18_preprocess(inp):
     return inp.numpy()
 
 processed = resnet18_preprocess(random_input)
-result = waiter.call_inference(processed,"resnet")
+result = client.call_inference(processed,"resnet",blocking=True)
 print(result)
